@@ -1,0 +1,67 @@
+# ========================
+# General
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+*.tmp
+*.swp
+*.bak
+*.orig
+*.rej
+
+# ========================
+# Environments / Secrets
+# ========================
+.env
+.env.*
+.venv/
+venv/
+env/
+ENV/
+Pipfile
+Pipfile.lock
+
+# ========================
+# IDE / Editor configs
+# ========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ========================
+# System / OS files
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================
+# Database / Data / Cache
+# ========================
+*.db
+*.sqlite3
+*.sql
+*.csv
+*.xlsx
+*.json
+*.xml
+*.parquet
+
+# ========================
+# Docker / Containers
+# ========================
+docker/sqlserver/data/
+*.pid
+*.sock
+*.pid.lock
+
+# ========================
+# Build / Distribution
+# ========================
+build/
+dist/
+*.egg-info/
+.eggs/
