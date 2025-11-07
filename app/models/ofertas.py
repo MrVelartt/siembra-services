@@ -1,22 +1,29 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String, Integer, Text
 from app.db.session import Base
 
 class Oferta(Base):
-    __tablename__ = "tbl_Oferta"
+    __tablename__ = "Ofertas"
 
-    OferTbl_Id = Column(Integer, primary_key=True, index=True)
-    Ofer_Id = Column(Integer, nullable=False)
-    Ofer_Titulo = Column(String(5000))
-    Ofer_Desc = Column(String)
-    Esp_Id = Column(Integer)
-    Esp_Desc = Column(String(500))
-    Cad_Id = Column(Integer)
-    Cad_Desc = Column(String(500))
-    Ciu_Cod = Column(String(4))
-    Ciu_Desc = Column(String(150))
-    Dep_Id = Column(String(6))
-    Dep_Desc = Column(String(150))
-    Reg_Id = Column(Integer)
-    Reg_Desc = Column(String(150))
-    Pais_Id = Column(Integer)
-    Pais_Desc = Column(String(500))
+    Id = Column(String, primary_key=True, index=True)  # UUID -> str en Python
+
+    Ofer_Id = Column(Integer, nullable=True)  # <- 🔥 Antes String, ahora correcto
+    Ofer_Titulo = Column(String, nullable=True)
+    Ofer_Desc = Column(Text, nullable=True)  # <- Text para descripciones largas
+
+    Esp_Id = Column(String, nullable=True)
+    Esp_Desc = Column(String, nullable=True)
+
+    Cad_Id = Column(String, nullable=True)
+    Cad_Desc = Column(String, nullable=True)
+
+    Ciu_Id = Column(String, nullable=True)
+    Ciu_Desc = Column(String, nullable=True)
+
+    Dep_Id = Column(String, nullable=True)
+    Dep_Desc = Column(String, nullable=True)
+
+    Reg_Id = Column(String, nullable=True)
+    Reg_Desc = Column(String, nullable=True)
+
+    Pais_Id = Column(String, nullable=True)
+    Pais_Desc = Column(String, nullable=True)

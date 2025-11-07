@@ -10,13 +10,8 @@ app = FastAPI(
     description="Microservicio base para conexión y servicios sobre SQL Server (Siembra DB)"
 )
 
-# 🌱 Ruta raíz
-@app.get("/")
-def root():
-    return {"message": "Siembra Service API running 🚀"}
-
 # 🔍 Ruta de prueba de conexión
-@app.get("/test-db")
+@app.get("/test-db", tags=["BaseDatos"])
 def test_db():
     """Verifica conexión con SQL Server."""
     try:
