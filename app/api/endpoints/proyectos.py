@@ -1,38 +1,46 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from app.db.session import get_db
+from app.db.utils import normalize
+from app.db.pagination import parse_range
 from app.models.proyectos import Proyecto
 from app.schemas.proyectos import ProyectoBase
 
 router = APIRouter(prefix="/proyectos", tags=["Proyectos"])
 
+
 @router.get("/", response_model=list[ProyectoBase])
 def listar_proyectos(
-    departamento: str | None = Query(None, description="Ej: Cauca (COL) ó cauca"),
-    especie: str | None = Query(None, description="Ej: Mojarra, Tilapia, Cobia"),
-    cadena: str | None = Query(None, description="Cadena productiva (Cad_Desc)"),
-    limit: int | None = Query(None, ge=1, le=200),
-    offset: int = Query(0, ge=0),
+    response: Response,
+    range: str | None = Query(None, description="Formato: start-end, ej: 0-49"),
+    departamento: str | None = None,
+    especie: str | None = None,
+    cadena: str | None = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(Proyecto)
+    offset, limit = parse_range(range)
 
-    # 🔥 Filtros flexibles (ilike = case-insensitive + LIKE %valor%)
+    base_query = db.query(Proyecto)
+
     if departamento:
-        query = query.filter(func.lower(Proyecto.Dep_Desc).ilike(f"%{departamento.lower()}%"))
-
+        base_query = base_query.filter(normalize(Proyecto.Dep_Desc).ilike(f"%{departamento}%"))
     if especie:
-        query = query.filter(func.lower(Proyecto.Esp_Desc).ilike(f"%{especie.lower()}%"))
-
+        base_query = base_query.filter(normalize(Proyecto.Esp_Desc).ilike(f"%{especie}%"))
     if cadena:
-        query = query.filter(func.lower(Proyecto.Cad_Desc).ilike(f"%{cadena.lower()}%"))
+        base_query = base_query.filter(normalize(Proyecto.Cad_Desc).ilike(f"%{cadena}%"))
 
-    # Ordenar
-    query = query.order_by(Proyecto.Proy_Titulo)
+    total = base_query.count()
 
-    # Paginación opcional (solo si viene limit)
-    if limit:
-        query = query.limit(limit).offset(offset)
+    data = (
+        base_query
+        .order_by(Proyecto.Proy_Titulo)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
 
-    return query.all()
+    end = offset + len(data) - 1 if data else offset
+    response.headers["Content-Range"] = f"{offset}-{end}/{total}"
+    response.headers["Accept-Ranges"] = "items"
+
+    return data
