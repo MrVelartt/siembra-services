@@ -23,15 +23,13 @@ def listar_ofertas(
     base_query = db.query(Oferta)
 
     if departamento:
-        base_query = base_query.filter(normalize(Oferta.Dep_Desc).ilike(f"%{departamento}%"))
+        base_query = base_query.filter(normalize(Oferta.Dep_Id).ilike(f"%{departamento}%"))
     if especie:
         base_query = base_query.filter(normalize(Oferta.Esp_Desc).ilike(f"%{especie}%"))
     if cadena:
         base_query = base_query.filter(normalize(Oferta.Cad_Desc).ilike(f"%{cadena}%"))
-    if region:
-        base_query = base_query.filter(normalize(Oferta.Reg_Desc).ilike(f"%{region}%"))
     if ciudad:
-        base_query = base_query.filter(normalize(Oferta.Ciu_Desc).ilike(f"%{ciudad}%"))
+        base_query = base_query.filter(normalize(Oferta.Ciu_Id).ilike(f"%{ciudad}%"))
 
     total = base_query.count()
 
@@ -46,7 +44,7 @@ def listar_ofertas(
     end = offset + len(data) - 1 if data else offset
 
     # ✅ Headers estandarizados IM
-    response.headers["Content-Range"] = f"items {offset}-{end}/{total}"
+    response.headers["Content-Range"] = f"{offset}-{end}/{total}"
     response.headers["X-Total-Count"] = str(total)
     response.headers["Accept-Ranges"] = "items"
 

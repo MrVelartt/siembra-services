@@ -22,13 +22,13 @@ def listar_demandas(
     base_query = db.query(Demanda)
 
     if departamento:
-        base_query = base_query.filter(normalize(Demanda.Dep_Desc).ilike(f"%{departamento}%"))
+        base_query = base_query.filter(normalize(Demanda.Dep_Id).ilike(f"%{departamento}%"))
     if especie:
         base_query = base_query.filter(normalize(Demanda.Esp_Desc).ilike(f"%{especie}%"))
     if cadena:
         base_query = base_query.filter(normalize(Demanda.Cad_Desc).ilike(f"%{cadena}%"))
     if region:
-        base_query = base_query.filter(normalize(Demanda.Reg_Desc).ilike(f"%{region}%"))
+        base_query = base_query.filter(normalize(Demanda.Reg_Id).ilike(f"%{region}%"))
 
     total = base_query.count()
 
@@ -43,7 +43,7 @@ def listar_demandas(
     end = offset + len(data) - 1 if data else offset
 
     # ✅ Headers estandarizados IM
-    response.headers["Content-Range"] = f"items {offset}-{end}/{total}"
+    response.headers["Content-Range"] = f"{offset}-{end}/{total}"
     response.headers["X-Total-Count"] = str(total)
     response.headers["Accept-Ranges"] = "items"
 

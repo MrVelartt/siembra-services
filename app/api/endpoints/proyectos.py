@@ -14,6 +14,7 @@ def listar_proyectos(
     limit: int = Query(50, ge=1, le=200, description="Cantidad de registros a retornar"),
     offset: int = Query(0, ge=0, description="Número de registros a saltar"),
     departamento: str | None = None,
+    ciudad: str | None = None,
     especie: str | None = None,
     cadena: str | None = None,
     db: Session = Depends(get_db)
@@ -21,11 +22,13 @@ def listar_proyectos(
     base_query = db.query(Proyecto)
 
     if departamento:
-        base_query = base_query.filter(normalize(Proyecto.Dep_Desc).ilike(f"%{departamento}%"))
+        base_query = base_query.filter(normalize(Proyecto.Dep_Id).ilike(f"%{departamento}%"))
     if especie:
         base_query = base_query.filter(normalize(Proyecto.Esp_Desc).ilike(f"%{especie}%"))
     if cadena:
         base_query = base_query.filter(normalize(Proyecto.Cad_Desc).ilike(f"%{cadena}%"))
+    if ciudad:
+        base_query = base_query.filter(normalize(Proyecto.Ciu_Id).ilike(f"%{ciudad}%"))
 
     total = base_query.count()
 
@@ -40,7 +43,7 @@ def listar_proyectos(
     end = offset + len(data) - 1 if data else offset
 
     # ✅ Headers estándar IM
-    response.headers["Content-Range"] = f"items {offset}-{end}/{total}"
+    response.headers["Content-Range"] = f"{offset}-{end}/{total}"
     response.headers["X-Total-Count"] = str(total)
     response.headers["Accept-Ranges"] = "items"
 
